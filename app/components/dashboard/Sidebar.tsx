@@ -1,3 +1,4 @@
+"use client"
 import {
   HomeIcon,
   BarChart2Icon,
@@ -10,6 +11,7 @@ import { AudioSelector, ProcessButton } from "./index"
 import { useDashboard } from "../../context/DashboardContext"
 import Link from "next/link"
 import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 
 const navItems = [
   { label: "Home", icon: HomeIcon, href: "#" },
@@ -40,12 +42,32 @@ export default function Sidebar({
   } = useDashboard()
 const [isProgress, setIsProgress] = useState(0)
   const isExpanded = !collapsed
+  const router = useRouter()
+  const pathname = usePathname()
 
   const handleMenuClick = () => {
     // Collapse sidebar only if it's expanded
     if (isExpanded) {
       toggleSidebar()
     }
+  }
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    href: string
+  ) => {
+    // For Reports, always force a full page reload to reset all client state
+    if (href === "/agent-summary") {
+      e.preventDefault()
+      window.location.href = href
+      return
+    }
+    if (pathname === href) {
+      e.preventDefault()
+      window.location.reload()
+      return
+    }
+    handleMenuClick()
   }
 
   const menuItems = [
@@ -130,7 +152,7 @@ const [isProgress, setIsProgress] = useState(0)
               <Link
                 key={menu.id}
                 href={menu.href}
-                onClick={handleMenuClick}
+                onClick={(e) => handleNavClick(e, menu.href)}
                 className="flex gap-3 items-center w-full px-4 py-2 text-left hover:bg-gray-100 rounded-md transition-colors"
               >
                 <span>
@@ -265,6 +287,7 @@ const [isProgress, setIsProgress] = useState(0)
           </Link>
           <Link
             href="/agent-summary"
+            onClick={(e) => handleNavClick(e, "/agent-summary")}
             className="justify-center flex gap-3 items-center w-full px-4 py-2 text-left hover:bg-gray-100 rounded-md transition-colors h-[48px]"
           >
             <span>

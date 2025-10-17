@@ -398,4 +398,73 @@ body {
   .detected_audiofiles-list{
     background-color: #E6EDF9;
   }
+  .anomaly-detection{
+    background-image: url(../public/Anomaly-detaction-1.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: #ff000027;
+  }
+  .Anomaly-Detection-text{
+    margin-left: 110px;
+    font-size: 30px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: #ffffffc7;
+  }
+  .anomalyDetaction-main-bg{
+    background-image: url(../public/Anomaly-detaction-3.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+  }
+  .Anomaly-Detection-round{
+    border: 10px solid #ff3b3b;
+    border-radius: 100px;
+    width: 150px;
+    height: 150px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-image: url(../public/Anomaly-detaction-5.png);
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .resons-slot-list{
+    background-color: #ccc;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    padding: 8px 15px 8px 20px;
+    background-color: #ff000027;
+    width: 510px;
+  }
+  .overflow-anomaly-reas-ato{
+    overflow: auto;
+    max-height: 190px;
+  }
+    /* For Chrome, Edge, and Safari */
+  .overflow-anomaly-reas-ato::-webkit-scrollbar {
+    width: 10px;              /* width of the scrollbar */
+  }
+
+  .overflow-anomaly-reas-ato::-webkit-scrollbar-track {
+    background: #190022;       /* color of the track (scroll area) */
+    border-radius: 10px;       /* rounded track corners */
+  }
+
+  .overflow-anomaly-reas-ato::-webkit-scrollbar-thumb {
+    background: #fd8585;       /* scrollbar color */
+    border-radius: 10px;       /* rounded thumb corners */
+  }
+
+  .overflow-anomaly-reas-ato::-webkit-scrollbar-thumb:hover {
+    background: #fa8b8b;       /* color on hover */
+  }
+
+  /* For Firefox */
+  .overflow-anomaly-reas-ato {
+    scrollbar-width: thin;         /* auto | thin | none */
+    scrollbar-color: #ff8e8e #190022; /* thumb color | track color */
+  }
 }

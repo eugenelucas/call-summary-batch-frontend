@@ -103,6 +103,15 @@ const Dashboard = () => {
     })
   )
 
+  const hasAnyAnomaly = formattedResults.some((item: any) => {
+    const ad = item?.anomaly_detection
+    return (
+      Boolean(ad?.isAnomaly) ||
+      (ad?.anomalyCount ?? 0) > 0 ||
+      (ad?.reasons?.length ?? 0) > 0
+    )
+  })
+
   // FIXED: Use simpler, working condition from old code instead of over-strict validation
   const showAudioInsights = !loading && formattedResults.length > 0
   // const showAudioInsights = !loading && graphData?.sentiment_chunks?.length > 0;
@@ -220,7 +229,6 @@ const Dashboard = () => {
     })
   )
 
-  console.log(progress, "progress")
 
   return (
     <>
@@ -236,13 +244,15 @@ const Dashboard = () => {
         >
           {showAudioInsights && (
             <div className="mt-6 pt-4 audio-insights-main flex flex-col gap-6 ">
-              <Toast
-                open={isToast}
-                title="Success!"
-                description="Anomaly Detection"
-                buttonText="Close"
-                onButtonClick={() => setIsToast(false)}
-              />
+              {hasAnyAnomaly && (
+                <Toast
+                  open={isToast}
+                  title="Success!"
+                  description="Anomaly detected"
+                  buttonText="Close"
+                  onButtonClick={() => setIsToast(false)}
+                />
+              )}
               <h1 className="text-2xl font-bold mt-1 pt-6 ot-title">
                 Audio Insights
               </h1>
@@ -315,18 +325,28 @@ const Dashboard = () => {
                         emailSent={graphData?.email_sent ?? []}
                         audioId={graphData?.id}
                         sentimentScore={graphData?.sentiment_score ?? 0}
+                        incidentNumber={graphData?.inc_number || ""}
                       />
                       {/* anomaly-detection component */}
-                      <AnomalyDetection
-                        isAnomaly={
+                      {(() => {
+                        const isAnomaly =
                           graphData?.anomaly_detection?.isAnomaly ?? false
-                        }
-                        anomalyCount={
+                        const anomalyCount =
                           graphData?.anomaly_detection?.anomalyCount ?? 0
-                        }
-                        reasons={graphData?.anomaly_detection?.reasons ?? []}
-                        setToast={setIsToast}
-                      />
+                        const reasons =
+                          graphData?.anomaly_detection?.reasons ?? []
+                        const hasAnomaly =
+                          Boolean(isAnomaly) || anomalyCount > 0 || reasons.length > 0
+                        if (!hasAnomaly) return null
+                        return (
+                          <AnomalyDetection
+                            isAnomaly={isAnomaly}
+                            anomalyCount={anomalyCount}
+                            reasons={reasons}
+                            setToast={setIsToast}
+                          />
+                        )
+                      })()}
                     </div>
                   ))}
               </DndContext>

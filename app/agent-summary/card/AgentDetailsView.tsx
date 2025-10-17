@@ -5,13 +5,61 @@ import TotalNumberofCalls from '../../agent-details/cards/TotalNumberofCalls';
 import AnomalyChart from '../../agent-details/cards/AnomalyChart';
 import AgentAvatar from '../../agent-details/cards/AgentAvatar';
 import Image from 'next/image';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface AgentDetailsViewProps {
   agent: Agent;
   onBack: () => void;
 }
 
+type AnomalyDetail = {
+  audio_filename: string
+  anomaly_reasons: string[]
+}
+
 const AgentDetailsView: React.FC<AgentDetailsViewProps> = ({ agent, onBack }) => {
+  const [anomalyDetails, setAnomalyDetails] = useState<AnomalyDetail[]>([])
+  const [loading, setLoading] = useState(false)
+  const lastFetchedAgentRef = useRef<string | null>(null)
+  const inFlightRef = useRef<boolean>(false)
+
+  useEffect(() => {
+    const fetchAnomalies = async () => {
+      const agentName = agent?.agent_name?.trim()
+      if (!agentName) return
+      if (lastFetchedAgentRef.current === agentName || inFlightRef.current) return
+      inFlightRef.current = true
+      lastFetchedAgentRef.current = agentName
+      setLoading(true)
+      try {
+        const url = `https://ai-call-summary-ap-batch-fjfxdsdhdkd5b7bt.centralus-01.azurewebsites.net/anomaly-agent-details?agentname=${encodeURIComponent(agentName)}`
+        const res = await fetch(url, { method: 'POST', headers: { accept: 'application/json' }, body: '' })
+        if (!res.ok) {
+          setAnomalyDetails([])
+          return
+        }
+        const data: AnomalyDetail[] = await res.json()
+        setAnomalyDetails(Array.isArray(data) ? data : [])
+      } catch {
+        setAnomalyDetails([])
+      } finally {
+        setLoading(false)
+        inFlightRef.current = false
+      }
+    }
+    fetchAnomalies()
+  }, [agent?.agent_name])
+
+  const detectedFiles = useMemo(() => agent?.detected_audiofiles ?? [], [agent?.detected_audiofiles])
+
+  const filteredAnomalyDetails = useMemo(() => {
+    if (!Array.isArray(detectedFiles) || detectedFiles.length === 0) return [] as AnomalyDetail[]
+    const fileSet = new Set(detectedFiles)
+    return (anomalyDetails || []).filter((d) => fileSet.has(d.audio_filename))
+  }, [anomalyDetails, detectedFiles])
+
+  const totalAnomalies = useMemo(() => filteredAnomalyDetails.length, [filteredAnomalyDetails])
+
   return (
     <div className="container mx-auto p-4">
       <button
@@ -40,9 +88,28 @@ const AgentDetailsView: React.FC<AgentDetailsViewProps> = ({ agent, onBack }) =>
           <div className="flex flex-col gap-3 w-[18%] ">
             <h3 className="text-[26px] font-bold">Total Anomalies</h3>
             <div>
-              Automated anomaly detection. Actionable
-              insights at a glance.Strengthen
-              quality and compliance.
+              {filteredAnomalyDetails.length > 0 ? (
+                <ul className="list-disc pl-5 space-y-2 text-[14px] text-gray-700">
+                  {filteredAnomalyDetails.map((item, idx) => (
+                    <li key={idx}>
+                      <div className="font-semibold mb-1">{item.audio_filename}</div>
+                      {Array.isArray(item.anomaly_reasons) && item.anomaly_reasons.length > 0 && (
+                        <ul className="list-[circle] pl-5 space-y-1">
+                          {item.anomaly_reasons.map((reason, i) => (
+                            <li key={i}>{reason}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <>
+                  Automated anomaly detection. Actionable
+                  insights at a glance.Strengthen
+                  quality and compliance.
+                </>
+              )}
             </div>
           </div>
           <div className='w-[45%] flex gap-3 items-center'>
@@ -59,7 +126,7 @@ const AgentDetailsView: React.FC<AgentDetailsViewProps> = ({ agent, onBack }) =>
               <div className="px-6 py-4 flex gap-2 items-center bg-gray-100 active-color rounded-xl">
                 <span className="AnomalyChart-Anomalies-color"></span>
                 <span>Total Anomalies</span>
-                <span className="text-[30px] font-bold">{agent.total_anomalies}</span>
+                <span className="text-[30px] font-bold">{totalAnomalies}</span>
               </div>
             </div>
           </div>

@@ -1,20 +1,24 @@
 import React from "react";
-
-const Toast = ({ open, title, description, buttonText, onButtonClick }:any) => {
+import Image from 'next/image';
+const Toast = ({ open, title, description, buttonText, onButtonClick }: any) => {
   if (!open) return null;
 
   return (
-    <div className="flex justify-between w-[100%] items-center rounded-md mt-12 mb-0 bg-red-600 h-[60] px-6 py-4">
+    <div className="anomaly-detection flex justify-between w-[100%] items-center rounded-md mt-12 mb-0 bg-red-600 h-[60] px-6 py-4 h-[148px]">
       {/* <div style={{ fontWeight: "bold", fontSize: "18px" }}>{title}</div> */}
-      <div className="flex gap-3 text-white text-base items-center">
-        <svg width="30" height="27" viewBox="0 0 30 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M14.866 0.00350669C15.7952 -0.0449578 16.6652 0.411923 17.1581 1.18847C17.1814 1.22244 17.2034 1.25751 17.2241 1.29367L29.647 23.0677L29.6473 23.0682C30.6297 24.7919 29.4549 26.9227 27.4228 26.9228H2.57714C0.545276 26.9228 -0.629787 24.7919 0.352795 23.0681L0.353102 23.0677L12.7759 1.29371C12.7962 1.25807 12.8179 1.22347 12.8409 1.18996C13.2817 0.494502 14.0295 0.0482045 14.8641 0.00363824L14.866 0.00350669ZM3.30795 23.9293H26.6921L15 3.43615L3.30795 23.9293Z" fill="white" />
-          <path d="M14.9997 22.4427C15.8263 22.4427 16.4964 21.7726 16.4964 20.9459C16.4964 20.1193 15.8263 19.4492 14.9997 19.4492C14.173 19.4492 13.5029 20.1193 13.5029 20.9459C13.5029 21.7726 14.173 22.4427 14.9997 22.4427Z" fill="white" />
-          <path d="M16.4964 7.47512V17.9524H13.5029V7.47512H16.4964Z" fill="white" />
-        </svg>
+      <div className="flex gap-3 text-white text-base items-center Anomaly-Detection-text">
         {description}
-        </div>
-      <div>
+      </div>
+      <div className="mr-16 pt-4">
+        <Image
+          src="/anomaly-detaction-2.svg"
+          alt="Anomaly Detaction"
+          width={349}
+          height={282}
+          className="w-full max-w-md"
+        />
+      </div>
+      {/* <div>
         <button
           onClick={onButtonClick}
           style={{
@@ -26,7 +30,7 @@ const Toast = ({ open, title, description, buttonText, onButtonClick }:any) => {
           </svg>
 
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

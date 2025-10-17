@@ -8,7 +8,7 @@ interface AgentTableProps {
 
 export default function AgentTable({ agents, onViewDetails }: AgentTableProps) {
   return (
-    <div className="overflow-x-auto w-[100%] mt-2 max-w-7xl">
+    <div className="overflow-x-auto w-[100%] mt-2 max-w-7xl min-h-[800px]">
       <table className="bg-white border border-gray-200 min-w-full">
         <thead>
           <tr className="bg-gray-100">
